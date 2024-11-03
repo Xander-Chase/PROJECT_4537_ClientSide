@@ -57,8 +57,13 @@
     <script src="./public/scripts/themeChanger.js"></script>
 
     <script>
-        const API_BASE = "http://localhost:8080";
-        // "https://isa-term-project-e2902e646c5c.herokuapp.com";
+        // Determine if the app is running on localhost
+        const isLocalhost = window.location.hostname === 'localhost';
+
+        // Set the API_URL based on the environment
+        const API_URL = isLocalhost
+        ? 'http://localhost:8080'
+        : 'https://comp-4537-server-side-863fa8c790dd.herokuapp.com';
         async function handleSignup(event) {
             event.preventDefault(); // Prevent the page from reloading
 

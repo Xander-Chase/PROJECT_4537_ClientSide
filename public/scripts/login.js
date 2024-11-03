@@ -3,7 +3,7 @@ async function loginUser(event) {
     const email = document.querySelector('#floatingInput').value;
     const password = document.querySelector('#floatingPassword').value;
   
-    const response = await fetch('https://isa-term-project-e2902e646c5c.herokuapp.com/api/auth/login', {
+    const response = await fetch('https://comp-4537-server-side-863fa8c790dd.herokuapp.com/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
