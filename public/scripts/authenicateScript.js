@@ -1,5 +1,6 @@
-const API_URL = "http://localhost:8080";
-// "https://isa-term-project-e2902e646c5c.herokuapp.com";
+const API_URL = isLocalhost
+? 'http://localhost:8080'
+: 'https://comp-4537-server-side-863fa8c790dd.herokuapp.com';
 
 const TITLE_OPENING = "Your remaining usages,";
 const EXCLIMATION_MARK = "!";
