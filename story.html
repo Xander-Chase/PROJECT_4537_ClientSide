@@ -70,6 +70,13 @@
 
         // Add event listener for button click
         button.addEventListener('click', async () => {
+          
+          // Disable Buttons
+          const buttons = document.getElementsByClassName("ai_generated_prompt");
+          for (let i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = true;
+          }
+
           // Handle prompt selection
           try {
             const response = await fetch(`${API_URL}/api/generate-story`, {
@@ -100,6 +107,10 @@
               alert('Error generating the next part of the story');
             }
           } catch (error) {
+            // re-enable buttons
+            for (let i = 0; i < buttons.length; i++) {
+              buttons[i].disabled = false;
+            }
             console.error('Error:', error);
             alert('An error occurred while generating the next part of the story.');
           }
@@ -121,6 +132,13 @@
 
         // Add event listener for button click
         button.addEventListener('click', async () => {
+
+          // Disable Buttons
+          const buttons = document.getElementsByClassName("ai_generated_prompt");
+          for (let i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = true;
+          }
+
           // Handle prompt selection
           try {
             const response = await fetch(`${API_URL}/api/generate-story`, {
@@ -151,6 +169,10 @@
               alert('Error generating the next part of the story');
             }
           } catch (error) {
+            // re-enable buttons
+            for (let i = 0; i < buttons.length; i++) {
+              buttons[i].disabled = false;
+            }
             console.error('Error:', error);
             alert('An error occurred while generating the next part of the story.');
           }

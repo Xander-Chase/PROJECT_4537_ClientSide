@@ -28,7 +28,7 @@
   
           <form id="index_form">
             <input type="text" id="prompt" placeholder="Type your prompt here" required />
-            <input type="submit" value="Start your adventure!" />
+            <input type="submit" id="submitPrompt" value="Start your adventure!" />
           </form>
 
         </div>
@@ -47,6 +47,7 @@
 
       const prompt = document.getElementById('prompt').value;
 
+      document.getElementById("submitPrompt").disabled = true;
       try {
         const response = await fetch(`${API_URL}/api/generate-story`, {
           method: 'POST',
@@ -67,6 +68,7 @@
           alert('Error generating story');
         }
       } catch (error) {
+        document.getElementById("submitPrompt").disabled = false;
         console.error('Error:', error);
         alert('An error occurred while generating the story.');
       }
