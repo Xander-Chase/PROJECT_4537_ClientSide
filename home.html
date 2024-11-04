@@ -1,4 +1,4 @@
-<!-- index.html -->
+<!-- home.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,26 +38,13 @@
 
   </main>
 
-  <script>
-    // Determine if the app is running on localhost
-    const isLocalhost = window.location.hostname === 'localhost';
-
-    // Set the API_URL based on the environment
-    const API_URL = isLocalhost
-      ? 'http://localhost:8080'
-      : 'https://comp-4537-server-side-863fa8c790dd.herokuapp.com';
-    
+  <script>    
     // Insert Components
 
     // Actual Script Functionality
     document.getElementById('index_form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      // if (API_URL === "")
-      // {
-      //   window.location.href = 'story.html';
-      //   return;
-      // }
+
       const prompt = document.getElementById('prompt').value;
 
       try {
@@ -84,12 +71,6 @@
         alert('An error occurred while generating the story.');
       }
     });
-
-  // const rawr = validateAndGetUser.then((data) => {
-  //   console.log(data);
-  // });
-            // greetingHTML.innerHTML = `Welcome, ${data.user.username}!`;
-
 
   </script>
   <script type="module">

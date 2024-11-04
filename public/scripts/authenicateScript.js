@@ -1,5 +1,10 @@
-const API_URL = "http://localhost:8080";
-// "https://isa-term-project-e2902e646c5c.herokuapp.com";
+// Determine if the app is running on localhost
+const isLocalhost = window.location.hostname === 'localhost';
+
+// Set the API_URL based on the environment
+const API_URL = isLocalhost
+    ? 'http://localhost:8080'
+    : 'https://comp-4537-server-side-863fa8c790dd.herokuapp.com';
 
 const TITLE_OPENING = "Your remaining usages,";
 const EXCLIMATION_MARK = "!";
@@ -57,16 +62,21 @@ const onLogin = async (event) => {
     try {
         // Make a Promise consisting of a POST request to the login API
         const response = new Promise(async (res, rej) => {
-        const payload = await fetch(`${API_URL}/api/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-        });
-
-        if (payload.ok)
-            res(payload);
-        else
-            rej(payload);
+            try {
+                const payload = await fetch(`${API_URL}/api/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password }),
+                });
+        
+                if (payload.ok)
+                    res(payload);
+                else
+                    rej(payload.json());
+                
+            } catch (err) {
+                rej(err);
+            }
         });
 
         response.then(
@@ -81,18 +91,24 @@ const onLogin = async (event) => {
 
                 // Create new promise that gets user from database
                 new Promise(async (res, rej) => {
-                    const userPayload = await fetch(`${API_URL}/api/auth/user`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${data.token}`,
-                        }
-                    })
-                    
-                    if (userPayload.ok)
-                        res(userPayload);
-                    else
-                        rej(userPayload);
+                    try {
+                        const userPayload = await fetch(`${API_URL}/api/auth/user`, {
+                            method: "GET",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${data.token}`,
+                            }
+                        });
+                        
+                        if (userPayload.ok)
+                            res(userPayload);
+                        else
+                            rej(userPayload.json());
+                    }
+                    catch (err)
+                    {
+                        rej(err);
+                    }
                 }).then(
                     // If we were able to get the user
                     async (userPayload) => {
@@ -114,12 +130,19 @@ const onLogin = async (event) => {
                             onclick="window.location.href = 'home.html'">
                             Home
                             </button>`;
-                    })
+                    },
+                    async (payload) => {
+                        // If failed to get the user
+                        let data = payload.error ?? payload;
+                        alert(data || LOGIN_FAILED);
+                        loginButton.removeAttribute("disabled");
+                    }
+                )
             },
             async (payload) => {
                 // If login failed
-                let data = await payload.json();
-                alert(data.error || LOGIN_FAILED);
+                let data = payload.error ?? payload;
+                alert(data || LOGIN_FAILED);
                 loginButton.removeAttribute("disabled");
             }          
         )
