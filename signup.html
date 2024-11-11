@@ -54,16 +54,10 @@
         </div>
     </div>
 
+    <script src="./public/scripts/constants.js"></script>
+    <script src="./public/scripts/Utils.js"></script>
     <script src="./public/scripts/themeChanger.js"></script>
-
     <script>
-        // Determine if the app is running on localhost
-        const isLocalhost = window.location.hostname === 'localhost';
-
-        // Set the API_URL based on the environment
-        const API_URL = isLocalhost
-        ? 'http://localhost:8080'
-        : 'https://comp-4537-server-side-863fa8c790dd.herokuapp.com';
         async function handleSignup(event) {
             event.preventDefault(); // Prevent the page from reloading
 
@@ -72,10 +66,10 @@
             const password = document.getElementById('floatingPassword').value;
 
             try {
-                const response = await fetch(`${API_URL}/api/auth/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, email, password }),
+                const response = await Utils.PostFetch(`${API_URL}/api/auth/register`, {
+                    username,
+                    email,
+                    password,
                 });
 
                 const data = await response.json();

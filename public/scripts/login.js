@@ -9,13 +9,12 @@ async function loginUser(event) {
       body: JSON.stringify({ email, password }),
     });
   
-    const data = await response.json();
+    const payload = await response.json();
     if (response.ok) {
       alert('Login successful!');
-      localStorage.setItem('token', data.token); // Store JWT token
       window.location.href = 'adminDashboard.html'; // Redirect on success
     } else {
-      alert(data.error);
+      alert(payload.error);
     }
   }
   

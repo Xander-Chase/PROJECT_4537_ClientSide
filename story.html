@@ -34,17 +34,9 @@
     <button class="navigation_button" id="nextButton">&gt; Next</button>
   </div>
 
+  <script src="./public/scripts/constants.js"></script>
   <script src="./public/scripts/Utils.js"></script>
   <script>
-
-    // To make sure that we are not reusing the same string over and over
-    // Determine if the app is running on localhost
-    const isLocalhost = window.location.hostname === 'localhost';
-
-    // Set the API_URL based on the environment
-    const API_URL = isLocalhost
-      ? 'http://localhost:8080'
-      : 'https://comp-4537-server-side-863fa8c790dd.herokuapp.com';
 
     // Retrieve the story text and prompt options
     let storyText = localStorage.getItem('storyText') || '';
@@ -79,14 +71,10 @@
 
           // Handle prompt selection
           try {
-            const response = await fetch(`${API_URL}/api/generate-story`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                prompt: `${Utils.cleanString(suggestion)}`,
-              }),
+            const response = await Utils.PostFetch(`${API_URL}/api/generate-story`, {
+              prompt: `${Utils.cleanString(suggestion)}`,
             });
-
+            
             if (response.ok) {
               const data = await response.json();
               const newStoryPart = data.generatedStoryPart;
@@ -141,12 +129,8 @@
 
           // Handle prompt selection
           try {
-            const response = await fetch(`${API_URL}/api/generate-story`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                prompt: `${Utils.cleanString(suggestion)}`,
-              }),
+            const response = await PostFetch(`${API_URL}/api/generate-story`, {
+              prompt: `${Utils.cleanString(suggestion)}`,
             });
 
             if (response.ok) {
@@ -195,13 +179,10 @@
   </script>
   <script type="module">
 
-    import { loadHeader, validateAndGetUser } from './public/scripts/loadComponents.js';
+    import { loadHeader, GetUserPromise } from './public/scripts/loadComponents.js';
     loadHeader();
 
-    let userData = null;
-    await validateAndGetUser().then((data) => {
-      userData = data;
-    });
+    let userData = await GetUserPromise();
 
     userNameHeader.innerHTML = `Welcome, ${userData.user.username}! To your story!`;
 

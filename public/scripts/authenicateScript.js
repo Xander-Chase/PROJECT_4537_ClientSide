@@ -1,17 +1,3 @@
-// Determine if the app is running on localhost
-const isLocalhost = window.location.hostname === 'localhost';
-
-// Set the API_URL based on the environment
-const API_URL = isLocalhost
-? 'http://localhost:8080'
-: 'https://comp-4537-server-side-863fa8c790dd.herokuapp.com';
-
-/**
-const API_URL = isLocalhost
-? 'http://localhost:8080'
-: 'https://comp-4537-server-side-863fa8c790dd.herokuapp.com';
-*/
-
 const TITLE_OPENING = "Your remaining usages,";
 const EXCLIMATION_MARK = "!";
 const DESCRIPTION_OPENING = "You have";
@@ -20,40 +6,6 @@ const LOGIN_FAILED = "Login failed. Please try again.";
 const NETWORK_ERROR = "Network error. Please try again later.";
 
 const secretKey = "key";
-const createToken = (username, password) => {
-
-    // Check if the user exists
-    // dont do this yet, we dont have database at moment
-    // user = find user in database
-    // if !user then return 401
-
-    // Check if the password is correct
-    // if user.password !== password then return 401
-
-    // Create a token
-    // const token = jwt.sign({userId: `${username}-${password}`}, secretKey, {
-    //     expiresIn: '1h'
-    // });
-
-    // if (Storage !== undefined) {
-    //     localStorage.setItem('token', token);
-    // } else {
-    //     console.log('Local storage is not supported');
-    // }
-}
-
-const authenicate = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        const decoded = jwt.verify(token, secretKey);
-        localStorage.setItem('id', decoded);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
 const onLogin = async (event) => {
     event.preventDefault(); // Prevent page reload on form submit
 
@@ -69,10 +21,9 @@ const onLogin = async (event) => {
         // Make a Promise consisting of a POST request to the login API
         const response = new Promise(async (res, rej) => {
             try {
-                const payload = await fetch(`${API_URL}/api/auth/login`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, password }),
+                const payload = await Utils.PostFetch(`${API_URL}/api/auth/login`, {
+                    email: email,
+                    password: password
                 });
         
                 if (payload.ok)
@@ -88,23 +39,15 @@ const onLogin = async (event) => {
         response.then(
             // If logged in successfully
             async (payload) => {
-
+                localStorage.setItem("isAuthenticated", "true");
+                
                 // Parse the response JSON
                 let data = await payload.json();
-
-                // store the JWT token in localStorage
-                localStorage.setItem("token", data.token);
 
                 // Create new promise that gets user from database
                 new Promise(async (res, rej) => {
                     try {
-                        const userPayload = await fetch(`${API_URL}/api/auth/user`, {
-                            method: "GET",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${data.token}`,
-                            }
-                        });
+                        const userPayload = await Utils.GetFetch(`${API_URL}/api/auth/user`, {});
                         
                         if (userPayload.ok)
                             res(userPayload);

@@ -38,59 +38,23 @@
 
   </main>
 
-  <script>    
-    // Insert Components
-
-    // Actual Script Functionality
-    document.getElementById('index_form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const prompt = document.getElementById('prompt').value;
-
-      document.getElementById("submitPrompt").disabled = true;
-      try {
-        const response = await fetch(`${API_URL}/api/generate-story`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          // Store the generated story and prompts in localStorage
-          localStorage.setItem('storyText', data.generatedStoryPart);
-          localStorage.setItem('promptOptions', JSON.stringify(data.promptOptions));
-          // Reset current page number
-          localStorage.setItem('currentPageNumber', '1');
-          // Redirect to the story page
-          window.location.href = 'story.html';
-        } else {
-          alert('Error generating story');
-        }
-      } catch (error) {
-        document.getElementById("submitPrompt").disabled = false;
-        console.error('Error:', error);
-        alert('An error occurred while generating the story.');
-      }
-    });
-
-  </script>
+  <script src="./public/scripts/constants.js"></script>
+  <script src="./public/scripts/Utils.js"></script>
   <script type="module">
 
-    import { loadHeader, validateAndGetUser } from './public/scripts/loadComponents.js';
+    import { loadHeader, GetUserPromise } from './public/scripts/loadComponents.js';
+    import { Dashboard } from './public/scripts/dashboard.js';
 
     loadHeader();
     const greetingHTML = document.getElementById('greeting');
 
-    let userData = null;
-    await validateAndGetUser().then((data) => {
-      userData = data;
-    });
+    let userData = await GetUserPromise();
+    new Dashboard(userData);
 
     greetingHTML.innerHTML = `Welcome, ${userData.user.username}!`;
     
   </script>
-    <!-- <script src="./public/scripts/loadComponents.js"></script> -->
+    <!-- <script src="./public/scripts/dashboard.js"></script> -->
     <script src="./public/scripts/authenicateScript.js"></script>
     <script src="./public/scripts/themeChanger.js"></script>
 

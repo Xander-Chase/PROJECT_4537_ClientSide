@@ -33,29 +33,9 @@
 
   </main>
 
-  <script src="./public/scripts/authenicateScript.js"></script>
+  <script src="./public/scripts/constants.js"></script>
+  <script src="./public/scripts/Utils.js"></script>
   <script>
-    let arr = [
-      {
-        "role": "user",
-        "username": "user1",
-        "email": "thingy@gmail.com",
-        "apiConsumption": 2
-      },
-      {
-        "role": "user",
-        "username": "Dreamer24",
-        "email": "soul24@gmail.com",
-        "apiConsumption": 10
-      },
-      {
-        "role": "admin",
-        "username": "testAdmin",
-        "email": "perhaps@gmail.com",
-        "apiConsumption": 99999
-      },
-
-    ];
     // Insert Components
 
     // Fetch Header component
@@ -65,10 +45,7 @@
     const table = document.getElementById("userTable");
 
     const getUsers = async () => {
-      const users = await fetch(`${API_URL}/api/admin/users`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      });
+      const users = await Utils.GetFetch(`${API_URL}/api/admin/users`);
 
       const data = await users.json();
       arr = data.users;
@@ -85,28 +62,14 @@
 
     getUsers();
 
-    // for (let i = 0; i < arr.length; i++)
-    // {
-    //   table.innerHTML += `<tr>
-    //         <th scope="row">${i+1}</th>
-    //         <td>${arr[i].role.toUpperCase()}</td>
-    //         <td>${arr[i].username}</td>
-    //         <td>${arr[i].email}</td>
-    //         <td>0</td>
-    //       </tr>`; 
-    // }
-
   </script>
 
   <script type="module">
 
-    import { loadHeader, validateAndGetUser } from './public/scripts/loadComponents.js';
+    import { loadHeader, GetUserPromise } from './public/scripts/loadComponents.js';
 
     loadHeader();
-    let userData = null;
-    await validateAndGetUser().then((data) => {
-      userData = data;
-    });
+    let userData = await GetUserPromise();
 
     if (userData.user.role !== "admin")
     {
