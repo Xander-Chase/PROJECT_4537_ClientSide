@@ -1,10 +1,38 @@
-
 .main_container, #suggestions_container, #login_form, #index_form, #story-container, #mainContent
 {
     display: flex;
     /* align-items: center; */
 }
 
+.row
+{
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0px !important;
+}
+
+.row div {
+    /* width: 50%;
+    display: flex; */
+    
+}
+
+.scrollable
+{
+    overflow-y: auto;
+    max-height: 600px;
+}
+.col
+{
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: wrap !important;
+}
+
+.col div {
+    width: 50%;
+    display: flex;
+}
 #mainContent
 {
     justify-content: center;
@@ -74,4 +102,15 @@
 .anchorLinkDesign:active
 {
     color: #FF0000;
+}
+
+@media only screen and (max-width: 1000px) {
+    .row
+    {
+        flex-direction: column !important;
+    }
+
+    .row div {
+        width: 100%;
+    }
 }
