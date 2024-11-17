@@ -8,19 +8,21 @@
 {
     display: flex !important;
     flex-direction: row !important;
-    gap: 0px !important;
+    /* gap: 0px !important; */
+    justify-content: center;
 }
 
-.row div {
-    /* width: 50%;
-    display: flex; */
-    
+#user-table-div div {
+    width: 25%;
+
+    /* display: flex; */
 }
 
 .scrollable
 {
     overflow-y: auto;
     max-height: 600px;
+    scrollbar-width: none;
 }
 .col
 {
@@ -30,8 +32,7 @@
 }
 
 .col div {
-    width: 50%;
-    display: flex;
+    padding: 5%;
 }
 #mainContent
 {
@@ -41,7 +42,6 @@
 }
 .main_container
 {
-    /* background-color: #f0f0f0; */
     padding: 5%;
     width: 100%;
     border-radius: 25px;

@@ -6,84 +6,112 @@
   <link rel="stylesheet" href="./public/styles/styles.css">  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
-<body>
+<body onload="NavigateUserProperlyKick()">
   <header id="header"></header>
 
-  <main id="mainContent" class="row">
-      <div class="text-center main_container shadow-lg scrollable">
-        <h1 class="display-5 fw-bold text-body-emphasis">All Endpoints</h1>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Method</th>
-              <th scope="col">Endpoint</th>
-              <th scope="col">Count</th>
-            </tr>
-          </thead>
-          <tbody id="endpoints-table">
-            <!-- Had help with GPT for this one - Teddy -->
-            <template id="endpoints-table-template">
+  <main id="mainContent " class="col">
+      <div class="row">
+        <div class="text-center main_container shadow-lg scrollable">
+          <h1 class="display-5 fw-bold text-body-emphasis">All Endpoints</h1>
+          <table class="table">
+            <thead>
               <tr>
-                <td class="endpoint-method"></td>
-                <td class="endpoint-name"></td>
-                <td class="endpoint-count"></td>
+                <th scope="col">Method</th>
+                <th scope="col">Endpoint</th>
+                <th scope="col">Count</th>
               </tr>
-            </template>
-          </tbody>
-        </table>
+            </thead>
+            <tbody id="endpoints-table">
+              <!-- Had help with GPT for this one - Teddy -->
+              <template id="endpoints-table-template">
+                <tr>
+                  <td class="endpoint-method"></td>
+                  <td class="endpoint-name"></td>
+                  <td class="endpoint-count"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+  
       </div>
 
-      <div class="text-center main_container shadow-lg scrollable">
-        <h1 class="display-5 fw-bold text-body-emphasis">All Users</h1>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Username</th>
-              <th scope="col">Email</th>
-              <th scope="col">Role</th>
-            </tr>
-          </thead>
-          <tbody id="userTable">
-            <!-- Had help with GPT for this one - Teddy -->
-            <template id="user-table-template">
+      <div class="row" id="user-table-div">
+        
+        <div class="text-center main_container shadow-lg scrollable">
+          <h1 class="display-5 fw-bold text-body-emphasis">All Users</h1>
+          <table class="table">
+            <thead>
               <tr>
-                <td class="user-id"></td>
-                <td class="user-name"></td>
-                <td class="user-email"></td>
-                <td class="user-role"></td>
+                <th scope="col">#</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Role</th>
               </tr>
-            </template>
-          </tbody>
-        </table>
-      </div>
-      <div class="text-center main_container shadow-lg scrollable">
-        <h1 class="display-5 fw-bold text-body-emphasis">API Usage</h1>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">User #</th>
-              <th scope="col">API Count / 20</th>
-            </tr>
-          </thead>
-          <tbody id="apiUsage-table">
-            <!-- Had help with GPT for this one - Teddy -->
-            <template id="apiUsage-table-template">
+            </thead>
+            <tbody id="userTable">
+              <!-- Had help with GPT for this one - Teddy -->
+              <template id="user-table-template">
+                <tr>
+                  <td class="user-id"></td>
+                  <td class="user-name"></td>
+                  <td class="user-email"></td>
+                  <td class="user-role"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="text-center main_container shadow-lg scrollable">
+          <h1 class="display-5 fw-bold text-body-emphasis">API Usage</h1>
+          <table class="table">
+            <thead>
               <tr>
-                <td class="user-id"></td>
-                <td class="api-count"></td>
-
+                <th scope="col">User #</th>
+                <th scope="col">API Count / 20</th>
               </tr>
-            </template>
-          </tbody>
-        </table>
+            </thead>
+            <tbody id="apiUsage-table">
+              <!-- Had help with GPT for this one - Teddy -->
+              <template id="apiUsage-table-template">
+                <tr>
+                  <td class="user-id"></td>
+                  <td class="api-count"></td>
+
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="text-center main_container shadow-lg scrollable">
+          <h1 class="display-5 fw-bold text-body-emphasis">API Usage</h1>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">User #</th>
+                <th scope="col">API Count / 20</th>
+              </tr>
+            </thead>
+            <tbody id="apiUsage-table">
+              <!-- Had help with GPT for this one - Teddy -->
+              <template id="apiUsage-table-template">
+                <tr>
+                  <td class="user-id"></td>
+                  <td class="api-count"></td>
+
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
       </div>
-
-
   </main>
 
   <script src="./public/scripts/constants.js"></script>
   <script src="./public/scripts/Utils.js"></script>
+  <script src="./public/scripts/authenicateScript.js"></script>
   <script>
     // Actual Script Functionality
     const userTable = document.getElementById("userTable");
