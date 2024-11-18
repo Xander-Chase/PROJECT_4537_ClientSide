@@ -46,7 +46,6 @@
                 <th scope="col">#</th>
                 <th scope="col">Username</th>
                 <th scope="col">Email</th>
-                <th scope="col">Role</th>
               </tr>
             </thead>
             <tbody id="userTable">
@@ -56,7 +55,6 @@
                   <td class="user-id"></td>
                   <td class="user-name"></td>
                   <td class="user-email"></td>
-                  <td class="user-role"></td>
                 </tr>
               </template>
             </tbody>
@@ -64,20 +62,20 @@
         </div>
         
         <div class="text-center main_container shadow-lg scrollable">
-          <h1 class="display-5 fw-bold text-body-emphasis">API Usage</h1>
+          <h1 class="display-5 fw-bold text-body-emphasis">Roles</h1>
           <table class="table">
             <thead>
               <tr>
                 <th scope="col">User #</th>
-                <th scope="col">API Count / 20</th>
+                <th scope="col">Role Info</th>
               </tr>
             </thead>
-            <tbody id="apiUsage-table">
+            <tbody id="role-table">
               <!-- Had help with GPT for this one - Teddy -->
-              <template id="apiUsage-table-template">
+              <template id="role-table-template">
                 <tr>
                   <td class="user-id"></td>
-                  <td class="api-count"></td>
+                  <td class="role"></td>
 
                 </tr>
               </template>
@@ -117,10 +115,12 @@
     const userTable = document.getElementById("userTable");
     const endpointsTable = document.getElementById("endpoints-table");
     const apiUsage = document.getElementById("apiUsage-table");
+    const roleTable = document.getElementById("role-table");
 
     const getUsers = async () => {
       const userTemplate = document.getElementById("user-table-template");
       const apiUsageTemplate = document.getElementById("apiUsage-table-template");
+      const roleTemplate = document.getElementById("role-table-template");
       const users = await Utils.GetFetch(`${API_URL}/api/admin/users`);
 
       const data = await users.json();
@@ -130,9 +130,13 @@
         userRowClone.querySelector(".user-id").textContent = ++index;
         userRowClone.querySelector(".user-name").textContent = element.username;
         userRowClone.querySelector(".user-email").textContent = element.email;
-        userRowClone.querySelector(".user-role").textContent = `${element.role}`.toUpperCase();
-
         userTable.appendChild(userRowClone);
+
+        const roleRowClone = roleTemplate.content.cloneNode(true);
+        roleRowClone.querySelector(".user-id").textContent = index;
+        roleRowClone.querySelector(".role").textContent = `${element.role}`.toUpperCase();
+
+        roleTable.appendChild(roleRowClone);
 
         const apiUsageRowClone = apiUsageTemplate.content.cloneNode(true);
         apiUsageRowClone.querySelector(".user-id").textContent = index;
