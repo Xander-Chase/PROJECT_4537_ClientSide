@@ -52,6 +52,7 @@ async function loadHeader() {
       console.log("Logging out");
       const response = await Utils.GetFetch(`${API_URL}/api/auth/logout`);
         if (response.ok) {
+          localStorage.clear();
           window.location.href = 'index.html';
         } else {
           alert('Error logging out');

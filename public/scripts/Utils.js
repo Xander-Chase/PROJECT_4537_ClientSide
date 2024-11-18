@@ -10,6 +10,7 @@ class Utils {
 
     static async GetFetch(url, body)
     {
+        console.log("was called");
         return await fetch(url, {
             method: "GET",
             headers: { 'Content-Type': 'application/json' },

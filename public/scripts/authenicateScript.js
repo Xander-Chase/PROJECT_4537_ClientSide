@@ -38,9 +38,7 @@ const onLogin = async (event) => {
 
         response.then(
             // If logged in successfully
-            async (payload) => {
-                localStorage.setItem("isAuthenticated", "true");
-                
+            async (payload) => {                
                 // Parse the response JSON
                 let data = await payload.json();
 
@@ -79,6 +77,8 @@ const onLogin = async (event) => {
                             onclick="window.location.href = 'home.html'">
                             Home
                             </button>`;
+                        localStorage.setItem("isAuthenticated", "true");
+
                     },
                     async (payload) => {
                         // If failed to get the user
@@ -104,4 +104,20 @@ const onLogin = async (event) => {
         loginButton.removeAttribute("disabled");
     }
 }
-    
+
+async function NavigateUserProperlyAuthPage() {
+    // If user is authenticated, redirect to home page
+
+    console.log("authenticating", localStorage.getItem("isAuthenticated"));
+    if (localStorage.getItem("isAuthenticated")) {
+        window.location.href = 'home.html';
+    }
+}
+
+async function NavigateUserProperlyKick () {
+    console.log("Authenicated: ", localStorage.getItem("isAuthenticated"));
+    // // If user is not authenticated, redirect to login page
+    if (!localStorage.getItem("isAuthenticated")) {
+        window.location.href = "index.html";
+    }
+}
