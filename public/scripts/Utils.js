@@ -10,22 +10,26 @@ class Utils {
 
     static async GetFetch(url, body)
     {
-        console.log("was called");
-        return await fetch(url, {
+        const payload = await fetch(url, {
             method: "GET",
             headers: { 'Content-Type': 'application/json' },
             credentials: "include"
         });
+        if (payload.status === 401)
+            localStorage.clear();
+        return payload;
     }
 
     static async PostFetch(url, body)
     {
-        console.log("rwar");
-        return await fetch(url, {
+        const payload = await fetch(url, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             credentials: "include",
             body: JSON.stringify(body),
         });
+        if (payload.status === 401)
+            localStorage.clear();
+        return payload;
     }
 }
