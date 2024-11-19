@@ -7,12 +7,19 @@ class Dashboard {
         this.userData = data;
     }
     init() {
-        this.loadDashboard();
+        this.loadList();
+
+        this.loadButtonFunctionality();
     }
-    loadDashboard() {
+    loadButtonFunctionality() {
         document.getElementById("index_form").onsubmit = async (event) => {
             // Dont re-fresh page
             event.preventDefault(); 
+
+            // Set loading spinner
+            document.getElementById("loading").style.visibility = "visible";
+            // Disable the submit button
+            document.getElementById("submitPrompt").disabled = true;
             // Get the prompt given by the user
             const prompt = document.getElementById("prompt").value;
             try {
@@ -70,6 +77,28 @@ class Dashboard {
             }
         }
     }
+
+    loadList()
+    {
+        console.log("Dashboard loaded");
+
+        let stories = [
+            {
+                title: "The Cat and the Hat",
+                description: "A story about a cat and a hat",
+            },
+            
+            {
+                title: "The Cat and the Hat",
+                description: "A story about a cat and a hat",
+            }
+            
+        ]
+
+        stories.forEach((story) => {
+            this.renderStory(story);
+        });
+    }
     async fetchStory(prompt) {
         return new Promise(async (res, rej) => {
             const response = await Utils.PostFetch(`${API_URL}${API_ENDPOINT}`, 
@@ -82,5 +111,23 @@ class Dashboard {
                 rej(ERROR_GEN_STORY);
         });
     }
+
+    async fetchList() {}
+
+    renderStory(story)
+    {
+        console.log(story);
+        let template = document.getElementById("story-item-template");   
+
+        // clone node
+        let clone = template.content.cloneNode(true);
+        clone.querySelector(".title").textContent = story.title;
+        clone.querySelector(".story-item-description").textContent = story.description;
+
+        // append node
+        document.getElementById("story-list").appendChild(clone);
+    }
+
+    
 }
 export {Dashboard};
