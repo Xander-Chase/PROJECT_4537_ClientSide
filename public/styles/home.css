@@ -64,3 +64,9 @@ button, #submitPrompt
     background-color: #898337;
     color: #f7ffc7;
 }
+
+textarea
+{
+    border-radius: 15px;
+    padding: 1%;
+}
