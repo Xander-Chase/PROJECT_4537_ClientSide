@@ -17,9 +17,8 @@ async function GetUserPromise() {
 * @returns {Promise<bool>} - Promise that resolves if the user is an admin, rejects otherwise
 */
 async function isAdmin() {
-  const userData = await GetUserPromise();
-  console.log(userData);
-  return userData.user.role === "admin";
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  return userData.role.role === "admin";
 };
 
 // Loads header

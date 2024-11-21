@@ -56,12 +56,7 @@
             <h2 class="title">{Story Title}</h2>
           </div>
           <div class="mx-auto">
-            <p class="lead mb-4 story-item-description">
-              Let us start your adventure by typing your prompt below. We will generate a story based on your prompt.
-              Let us start your adventure by typing your prompt below. We will generate a story based on your prompt.
-              Let us start your adventure by typing your prompt below. We will generate a story based on your prompt.
-              Let us start your adventure by typing your prompt below. We will generate a story based on your prompt.
-    
+            <p class="lead mb-4 story-item-description">    
             </p>
             <div class="d-grid gap-2 d-sm-flex justify-content-end">
               <button class="go">Delve in!</button>
@@ -77,13 +72,13 @@
   <script src="./public/scripts/Utils.js"></script>
   <script type="module">
 
-    import { loadHeader, GetUserPromise } from './public/scripts/loadComponents.js';
+    import { loadHeader } from './public/scripts/loadComponents.js';
     import { Dashboard } from './public/scripts/dashboard.js';
 
     loadHeader();
     const greetingHTML = document.getElementById('greeting');
 
-    let userData = await GetUserPromise();
+    let userData = JSON.parse(localStorage.getItem("userData"));
     new Dashboard(userData);
 
     greetingHTML.innerHTML = `Welcome, ${userData.user.username}!`;

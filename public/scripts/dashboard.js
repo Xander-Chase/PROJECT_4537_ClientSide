@@ -1,4 +1,4 @@
-const API_ENDPOINT = "/api/generate-story";
+const API_ENDPOINT = "/api/user/generate";
 const ERROR_GEN_STORY = "Error generating story";
 const ERROR_GEN_STORY_TWO = "An error occurred while generating the story.";
 class Dashboard {
@@ -29,12 +29,25 @@ class Dashboard {
                     (data) => {
 
                     // Store the generated story + prompts in localStorage
-                    localStorage.setItem('storyText', data.generatedStoryPart);
-                    localStorage.setItem('promptOptions', JSON.stringify(data.promptOptions));
+                    let userData = JSON.parse(localStorage.getItem("userData"));
+
+                    // If stories is an array
+                    if (userData.stories.title === undefined)
+                    {
+                        userData.stories.push(data.storyObj.story);
+                        localStorage.setItem("storyIndex", userData.stories.length - 1);
+                    }
+                    else // If stories is an object
+                        userData = {
+                            ...userData,
+                            stories: data.storyObj.story
+                        }
+                    // Store the updated user data in localStorage
+                    localStorage.setItem("userData", JSON.stringify(userData));
                     // Reset current page number
-                    localStorage.setItem('currentPageNumber', '1');
+                    localStorage.setItem("currentPaginationIndex", "1");
                     // Redirect to the story page
-                    window.location.href = 'story.html';
+                    window.location.href = "story.html";
 
                     // {
                     //                         // Append story to the localPage
@@ -80,21 +93,10 @@ class Dashboard {
 
     loadList()
     {
-        console.log("Dashboard loaded");
-
-        let stories = [
-            {
-                title: "The Cat and the Hat",
-                description: "A story about a cat and a hat",
-            },
-            
-            {
-                title: "The Cat and the Hat",
-                description: "A story about a cat and a hat",
-            }
-            
-        ]
-
+        let stories = JSON.parse(localStorage.getItem("userData")).stories;
+        if (stories.title !== undefined) {
+            this.renderStory(stories);
+        } else
         stories.forEach((story) => {
             this.renderStory(story);
         });
@@ -112,18 +114,26 @@ class Dashboard {
         });
     }
 
-    async fetchList() {}
-
     renderStory(story)
     {
-        console.log(story);
         let template = document.getElementById("story-item-template");   
 
         // clone node
         let clone = template.content.cloneNode(true);
         clone.querySelector(".title").textContent = story.title;
-        clone.querySelector(".story-item-description").textContent = story.description;
-
+        clone.querySelector(".story-item-description").textContent = story.summary;
+        clone.querySelector(".go").addEventListener("click", () => {
+            localStorage.setItem("paginationIndex", 0);
+            window.location.href = "story.html";
+        });
+        clone.querySelector(".delete").addEventListener("click", async () => {
+            // let stories = JSON.parse(localStorage.getItem("userData")).stories;
+            // let index = stories.findIndex((s) => s._id === story._id);
+            // stories.splice(index, 1);
+            // localStorage.setItem("userData", JSON.stringify({ stories: stories }));
+            // await Utils.DeleteFetch(`${API_URL}/api/story/${story._id}`);
+            // clone.remove();
+        });
         // append node
         document.getElementById("story-list").appendChild(clone);
     }

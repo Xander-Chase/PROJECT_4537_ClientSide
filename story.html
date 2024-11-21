@@ -15,7 +15,7 @@
     <div class="isa_col shadow-lg rounded p-3" id="controls">
       <h1>Name your story!</h1>
       <input type="text" id="storyTitle" class="form-control" placeholder="Story Title"/>
-      <textarea id="storyText" class="form-control" placeholder="Story Description" rows="10" cols="50"></textarea>
+      <textarea id="storyDesc" class="form-control" placeholder="Story Description" rows="10" cols="50"></textarea>
       <button id="saveStory" class="btn btn-primary">Save Story</button>
     </div>
     <div class="isa_row">
@@ -45,9 +45,23 @@
   <script>
 
     // Retrieve the story text and prompt options
-    let storyText = localStorage.getItem('storyText') || '';
-    const promptOptions = JSON.parse(localStorage.getItem('promptOptions'));
+    let stories = JSON.parse(localStorage.getItem("userData")).stories;
+    console.log(stories.title)
+    if (stories.title === undefined)
+    {
+       stories = stories[parseInt(localStorage.getItem("storyIndex"))]
+       console.log(stories)
+    }
+    const currentPageNum = (parseInt(localStorage.getItem("currentPaginationIndex")) - 1) || 0;
+    console.log(stories.content)
+    let storyText = stories.content[currentPageNum].description
+    const promptOptions = stories.content[currentPageNum].prompts;
 
+    const titleElement = document.getElementById("storyTitle");
+    titleElement.value = stories.title;
+    const descElement = document.getElementById("storyDesc");
+    descElement.value = stories.summary;
+    
     if (storyText) {
       document.getElementById('story_description').innerText = Utils.cleanString(storyText);
     } else {

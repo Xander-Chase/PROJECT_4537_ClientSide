@@ -45,7 +45,7 @@ const onLogin = async (event) => {
                 // Create new promise that gets user from database
                 new Promise(async (res, rej) => {
                     try {
-                        const userPayload = await Utils.GetFetch(`${API_URL}/api/auth/user`, {});
+                        const userPayload = await Utils.GetFetch(`${API_URL}/api/user/info`, {});
                         
                         if (userPayload.ok)
                             res(userPayload);
@@ -64,7 +64,7 @@ const onLogin = async (event) => {
 
                         // Display the user's remaining API consumptions
                         const title = `${TITLE_OPENING} ${dataJson.user.username}${EXCLIMATION_MARK}`;
-                        const description = `${DESCRIPTION_OPENING} ${dataJson.user.api_consumptions} ${DESCRIPTION_CLOSING}`;
+                        const description = `${DESCRIPTION_OPENING} ${dataJson.apiUsage.count} ${DESCRIPTION_CLOSING}`;
                         document.getElementById("panel").innerHTML = 
                             `<h1 class="display-4 fw-bold lh-1 text-body-emphasis mb-3">
                                 ${title}
@@ -78,6 +78,13 @@ const onLogin = async (event) => {
                             Home
                             </button>`;
                         localStorage.setItem("isAuthenticated", "true");
+                        localStorage.setItem("userData", JSON.stringify(dataJson));
+                        // block scope
+                        {
+                            // expire in 1hr
+                            const expirationDate = new Date().setHours(new Date().getHours() + 1);
+                            localStorage.setItem("expirationDate", `${expirationDate}`);
+                        }
 
                     },
                     async (payload) => {
@@ -107,17 +114,36 @@ const onLogin = async (event) => {
 
 async function NavigateUserProperlyAuthPage() {
     // If user is authenticated, redirect to home page
-
-    console.log("authenticating", localStorage.getItem("isAuthenticated"));
     if (localStorage.getItem("isAuthenticated")) {
-        window.location.href = 'home.html';
+        // If token is expired, redirect to login page
+        if (isExpired())
+            window.location.href = "index.html";
+        // If token is not expired, redirect to home page
+        else
+            window.location.href = 'home.html';
     }
 }
 
 async function NavigateUserProperlyKick () {
-    console.log("Authenicated: ", localStorage.getItem("isAuthenticated"));
-    // // If user is not authenticated, redirect to login page
-    if (!localStorage.getItem("isAuthenticated")) {
+    // If token is expired, redirect to login page
+    // If user is not authenticated, redirect to login page
+    if (isExpired() || !localStorage.getItem("isAuthenticated"))
         window.location.href = "index.html";
+}
+
+const isExpired = () => {
+    const expirationDate = parseInt(localStorage.getItem("expirationDate"));
+
+    // If expiration date is not set, clear local storage and redirect to login page
+    if (!expirationDate) {
+        localStorage.clear();
+        return true;
     }
+
+    // If is already expired, clear local storage and redirect to login page
+    if (new Date().getTime() > expirationDate) {
+        localStorage.clear();
+        return true;
+    }
+    return false;
 }
