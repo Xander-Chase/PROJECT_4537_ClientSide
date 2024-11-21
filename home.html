@@ -72,7 +72,7 @@
   <script src="./public/scripts/Utils.js"></script>
   <script type="module">
 
-    import { loadHeader } from './public/scripts/loadComponents.js';
+    import { loadHeader, removeStoryData } from './public/scripts/loadComponents.js';
     import { Dashboard } from './public/scripts/dashboard.js';
 
     loadHeader();
@@ -81,6 +81,7 @@
     let userData = JSON.parse(localStorage.getItem("userData"));
     new Dashboard(userData);
 
+    removeStoryData();
     greetingHTML.innerHTML = `Welcome, ${userData.user.username}!`;
     
   </script>

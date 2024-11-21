@@ -32,4 +32,30 @@ class Utils {
             localStorage.clear();
         return payload;
     }
+
+    static async PutFetch(url, body)
+    {
+        const payload = await fetch(url, {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json' },
+            credentials: "include",
+            body: JSON.stringify(body),
+        });
+        if (payload.status === 401)
+            localStorage.clear();
+        return payload;
+    }
+
+    static async DeleteFetch(url, body)
+    {
+        const payload = await fetch(url, {
+            method: "DELETE",
+            headers: { 'Content-Type': 'application/json' },
+            credentials: "include",
+            body: JSON.stringify(body),
+        });
+        if (payload.status === 401)
+            localStorage.clear();
+        return payload;
+    }
 }

@@ -45,7 +45,7 @@ class Dashboard {
                     // Store the updated user data in localStorage
                     localStorage.setItem("userData", JSON.stringify(userData));
                     // Reset current page number
-                    localStorage.setItem("currentPaginationIndex", "1");
+                    localStorage.setItem("currentPaginationIndex", 0);
                     // Redirect to the story page
                     window.location.href = "story.html";
 
@@ -97,10 +97,12 @@ class Dashboard {
         if (stories.title !== undefined) {
             this.renderStory(stories);
         } else
-        stories.forEach((story) => {
-            this.renderStory(story);
+        stories.forEach((story, index) => {
+            this.renderStory(story, index);
         });
     }
+
+    // Initial
     async fetchStory(prompt) {
         return new Promise(async (res, rej) => {
             const response = await Utils.PostFetch(`${API_URL}${API_ENDPOINT}`, 
@@ -114,7 +116,7 @@ class Dashboard {
         });
     }
 
-    renderStory(story)
+    renderStory(story, index)
     {
         let template = document.getElementById("story-item-template");   
 
@@ -123,16 +125,43 @@ class Dashboard {
         clone.querySelector(".title").textContent = story.title;
         clone.querySelector(".story-item-description").textContent = story.summary;
         clone.querySelector(".go").addEventListener("click", () => {
-            localStorage.setItem("paginationIndex", 0);
+            localStorage.setItem("currentPaginationIndex", 0);
+            if (index !== undefined)
+                localStorage.setItem("storyIndex", index);
+            else
+                localStorage.setItem("storyIndex", 0);
             window.location.href = "story.html";
         });
         clone.querySelector(".delete").addEventListener("click", async () => {
-            // let stories = JSON.parse(localStorage.getItem("userData")).stories;
-            // let index = stories.findIndex((s) => s._id === story._id);
-            // stories.splice(index, 1);
-            // localStorage.setItem("userData", JSON.stringify({ stories: stories }));
-            // await Utils.DeleteFetch(`${API_URL}/api/story/${story._id}`);
-            // clone.remove();
+            let stories = JSON.parse(localStorage.getItem("userData")).stories;
+            let storyIndex = 0;
+            if (index !== undefined) // if index is defined, use that
+                storyIndex = index;
+            else
+                storyIndex = stories.findIndex((s) => s._id === story._id);
+
+            // call api first then check if success or not
+            // if success, then remove from local storage
+            // if failed, alert user
+            const deletePayload = await Utils.DeleteFetch(`${API_URL}/api/user/deleteStory`, {
+                storyId: stories[storyIndex]._id
+            });
+
+            if (deletePayload.ok)
+            {
+                const data = JSON.parse(localStorage.getItem("userData"));
+                stories.splice(storyIndex, 1);
+                localStorage.setItem("userData", JSON.stringify({ 
+                    ...data,
+                    stories: stories
+                 }));
+                // refresh page
+                window.location.reload();
+            }
+            else
+            {
+                alert("Failed to delete story");
+            }
         });
         // append node
         document.getElementById("story-list").appendChild(clone);
