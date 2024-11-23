@@ -1,5 +1,6 @@
 const API_ENDPOINT = "/api/user/generate";
 const API_USAGE_ENDPOINT = "/api/user/getApiUsage";
+const API_DELETE = "/api/user/deleteStory";
 const ERROR_GEN_STORY = "Error generating story";
 const ERROR_GEN_STORY_TWO = "An error occurred while generating the story.";
 class Dashboard {
@@ -65,10 +66,9 @@ class Dashboard {
                         localStorage.setItem("storyIndex", userData.stories.length - 1);
                     }
                     else // If stories is an object
-                        userData = {
-                            ...userData,
-                            stories: data.storyObj.story
-                        }
+                    {
+                        userData.stories = [userData.stories, data.storyObj.story];
+                    }
                     // Store the updated user data in localStorage
                     localStorage.setItem("userData", JSON.stringify(userData));
                     // Reset current page number
@@ -144,7 +144,7 @@ class Dashboard {
             // call api first then check if success or not
             // if success, then remove from local storage
             // if failed, alert user
-            const deletePayload = await Utils.DeleteFetch(`${API_URL}/api/user/deleteStory`, {
+            const deletePayload = await Utils.DeleteFetch(`${API_URL}${API_DELETE}`, {
                 storyId: stories[storyIndex]._id
             });
 

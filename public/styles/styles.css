@@ -121,4 +121,8 @@
     {
         flex-direction: column !important;
     }
+    .isa_row div
+    {
+        width: 100% !important;
+    }
 }

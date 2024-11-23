@@ -1,5 +1,5 @@
 const API_ENDPOINT = "/api/admin/dashboard";
-
+const API_DELETE_USER = "/api/admin/deleteUser";
 class AdminDashboard
 {
     
@@ -13,9 +13,12 @@ class AdminDashboard
         this.getUserDashboardData().then((data) => {
             if (data)
             {
-                console.log(data);
+                const currentUserId = JSON.parse(localStorage.getItem("userData")).user._id;
                 new TableFactory("userTable", data.users.map((element) => {
-                    return { username: element.user.username, email: element.user.email }
+                    return { 
+                        current: currentUserId,
+                        id: element.user._id,
+                        username: element.user.username, email: element.user.email }
                 }));
                 new TableFactory("role-table", data.users.map((element) => {
                     return { role: element.role.role }
@@ -77,10 +80,30 @@ class TableFactory
         const template = document.getElementById("user-table-template");
         this.data.forEach((record, index) => {
             let clone = template.content.cloneNode(true);
+            const cell = clone.querySelector(".cell");
             clone.querySelector(".user-id").textContent = ++index;
             clone.querySelector(".user-name").textContent = record.username;
             clone.querySelector(".user-email").textContent = record.email;
-            this.table.appendChild(clone);;
+            
+            clone.querySelector(".deletion").onclick = async (event) => {
+                event.currentTarget.disabled = true;
+                if (record.current === record.id)
+                {
+                    event.currentTarget.innerHTML = "You";
+                    return;
+                }
+                const response = await Utils.DeleteFetch(`${API_URL}${API_DELETE_USER}`, { id: record.id });
+                if (response.ok)
+                {
+                    cell.classList.add("deleted");
+                    return;
+                }
+                else
+                    alert("Failed to delete user");
+
+                event.currentTarget.disabled = false;
+            }
+            this.table.appendChild(clone);
         })
     }
 

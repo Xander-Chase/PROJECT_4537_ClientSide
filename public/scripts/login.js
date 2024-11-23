@@ -18,5 +18,5 @@ async function loginUser(event) {
     }
   }
   
-  document.querySelector('#loginForm').addEventListener('submit', loginUser);
+  // document.querySelector('#loginForm').addEventListener('submit', loginUser);
   

@@ -65,16 +65,8 @@ class Story
             {
                 // set local storage
                 const userData = JSON.parse(localStorage.getItem("userData"));
-                if (userData.stories.title === undefined)
-                {
-                    userData.stories[parseInt(this.storyIndex)].title = titleElement.value;
-                    userData.stories[parseInt(this.storyIndex)].summary = descElement.value;
-                }
-                else
-                {
-                    userData.stories.title = titleElement.value;
-                    userData.stories.summary = descElement.value;
-                }
+                userData.stories[parseInt(this.storyIndex)].title = titleElement.value;
+                userData.stories[parseInt(this.storyIndex)].summary = descElement.value;
                 localStorage.setItem("userData", JSON.stringify(userData));
             } else
                 alert("Error saving story");
@@ -134,10 +126,7 @@ class Story
                 if (storyPayload.ok)
                 {
                     const storyData = await storyPayload.json();
-                    this.data = {
-                        ...this.data,
-                        stories: storyData.storyObj.story
-                    }
+                    this.data.stories[parseInt(this.storyIndex)] = storyData.storyObj.story;
                     // set local storage
                     localStorage.setItem("userData", JSON.stringify(this.data));
                     // set pagination index
@@ -223,10 +212,7 @@ class Story
     {
         let paginationIndex = parseInt(this.paginationIndex);
         let stories = null;
-        if (this.data.stories.title === undefined)
-            stories = this.data.stories[parseInt(this.storyIndex)];
-        else
-            stories = this.data.stories;
+        stories = this.data.stories[parseInt(this.storyIndex)];
         return {
             _id: stories._id,
             storyText: stories.content[paginationIndex].description,

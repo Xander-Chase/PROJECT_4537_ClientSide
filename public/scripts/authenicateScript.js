@@ -4,8 +4,44 @@ const DESCRIPTION_OPENING = "You have";
 const DESCRIPTION_CLOSING = "remaining out of 20 API consumptions left!";
 const LOGIN_FAILED = "Login failed. Please try again.";
 const NETWORK_ERROR = "Network error. Please try again later.";
+const API_REGISTER = "/api/auth/register";
 
-const secretKey = "key";
+const onRegister = async (event) => {
+    event.preventDefault(); // Prevent page reload on form submit
+
+    // Disable the register button to prevent multiple submissions
+    const registerButton = event.target.registerButton;
+    registerButton.toggleAttribute("disabled");
+
+    // Collect username, email and password from input fields
+    const username = event.target.username.value;
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+
+    try
+    {
+        const registerPayload = await Utils.PostFetch(`${API_URL}${API_REGISTER}`, {
+            username: username,
+            email: email,
+            password: password
+        });
+
+        const data = await registerPayload.json();
+        if (registerPayload.ok)
+        {
+            alert('Signup successful! You can now log in.');
+            window.location.href = 'index.html';
+        }
+        else
+            throw new Error(data.error || "Registration failed. Please try again.");
+    }
+    catch (error)
+    {
+        console.error("Error:", error);
+        alert(NETWORK_ERROR);
+        registerButton.removeAttribute("disabled");
+    }
+}
 const onLogin = async (event) => {
     event.preventDefault(); // Prevent page reload on form submit
 
@@ -124,9 +160,11 @@ async function NavigateUserProperlyAuthPage() {
     }
 }
 
-NavigateUserProperlyAdminPage = async () => 
+const NavigateUserProperlyAdminPage = async () => 
 {
     const userData = JSON.parse(localStorage.getItem("userData"));
+    if (!userData)
+        window.location.href = "index.html";
     if (userData.role.role !== "admin")
         window.location.href = "home.html";   
 }

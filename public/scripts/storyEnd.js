@@ -53,16 +53,8 @@ class StoryEnd
             {
                 // set local storage
                 const userData = JSON.parse(localStorage.getItem("userData"));
-                if (userData.stories.title === undefined)
-                {
-                    userData.stories[parseInt(this.storyIndex)].title = titleElement.value;
-                    userData.stories[parseInt(this.storyIndex)].summary = descElement.value;
-                }
-                else
-                {
-                    userData.stories.title = titleElement.value;
-                    userData.stories.summary = descElement.value;
-                }
+                userData.stories[parseInt(this.storyIndex)].title = titleElement.value;
+                userData.stories[parseInt(this.storyIndex)].summary = descElement.value;
                 localStorage.setItem("userData", JSON.stringify(userData));
             } else
                 alert("Error saving story");
@@ -111,10 +103,7 @@ class StoryEnd
     getStoryInfo()
     {
         let stories = null;
-        if (this.data.stories.title === undefined)
             stories = this.data.stories[parseInt(this.storyIndex)];
-        else
-            stories = this.data.stories;
         return {
             _id: stories._id,
             title: stories.title,
