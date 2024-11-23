@@ -1,11 +1,6 @@
-const TITLE_OPENING = "Your remaining usages,";
-const EXCLIMATION_MARK = "!";
-const DESCRIPTION_OPENING = "You have";
-const DESCRIPTION_CLOSING = "remaining out of 20 API consumptions left!";
-const LOGIN_FAILED = "Login failed. Please try again.";
-const NETWORK_ERROR = "Network error. Please try again later.";
 const API_REGISTER = "/api/auth/register";
 
+// Handler for the register form submission
 const onRegister = async (event) => {
     event.preventDefault(); // Prevent page reload on form submit
 
@@ -20,28 +15,34 @@ const onRegister = async (event) => {
 
     try
     {
+        // Make a POST request to the register API from server
         const registerPayload = await Utils.PostFetch(`${API_URL}${API_REGISTER}`, {
             username: username,
             email: email,
             password: password
         });
 
+        // If the registration was successful, alert the user and redirect to login page
         const data = await registerPayload.json();
         if (registerPayload.ok)
         {
             alert('Signup successful! You can now log in.');
             window.location.href = 'index.html';
         }
+        // If the registration failed, alert the user with the error message
         else
             throw new Error(data.error || "Registration failed. Please try again.");
     }
     catch (error)
     {
+        // Handle errors here
         console.error("Error:", error);
-        alert(NETWORK_ERROR);
+        alert(NETWORK_ERROR); // en.js
         registerButton.removeAttribute("disabled");
     }
 }
+
+// Handler for the login form submission
 const onLogin = async (event) => {
     event.preventDefault(); // Prevent page reload on form submit
 
@@ -62,34 +63,40 @@ const onLogin = async (event) => {
                     password: password
                 });
         
+                // If the response is OK, resolve the promise
                 if (payload.ok)
-                    res(payload);
+                    res();
                 else
+                    // If the response is not OK, reject the promise with the response JSON
                     rej(payload.json());
                 
             } catch (err) {
+                // Catch error and reject the promise with the error
                 rej(err);
             }
         });
 
+        // Handle the response from the login API
         response.then(
             // If logged in successfully
-            async (payload) => {                
-                // Parse the response JSON
-                let data = await payload.json();
+            async () => {                
 
                 // Create new promise that gets user from database
                 new Promise(async (res, rej) => {
                     try {
+                        // Get the user from the database
                         const userPayload = await Utils.GetFetch(`${API_URL}/api/user/info`, {});
                         
+                        // If the user was successfully retrieved, resolve the promise
                         if (userPayload.ok)
                             res(userPayload);
                         else
+                            // If the user was not successfully retrieved, reject the promise with the response JSON
                             rej(userPayload.json());
                     }
                     catch (err)
                     {
+                        // Catch error and reject the promise with the error
                         rej(err);
                     }
                 }).then(
@@ -113,13 +120,16 @@ const onLogin = async (event) => {
                             onclick="window.location.href = 'home.html'">
                             Home
                             </button>`;
-                        localStorage.setItem("isAuthenticated", "true");
-                        localStorage.setItem("userData", JSON.stringify(dataJson));
+
+                        // Set the user's data in local storage
+                        localStorage.setItem(localStorageNames.isAuthenticated, "true"); // constants.js
+                        localStorage.setItem(localStorageNames.data, JSON.stringify(dataJson));
+
                         // block scope
                         {
                             // expire in 1hr
                             const expirationDate = new Date().setHours(new Date().getHours() + 1);
-                            localStorage.setItem("expirationDate", `${expirationDate}`);
+                            localStorage.setItem(localStorageNames.expirationDate, `${expirationDate}`);
                         }
 
                     },
@@ -148,9 +158,10 @@ const onLogin = async (event) => {
     }
 }
 
-async function NavigateUserProperlyAuthPage() {
+// Handler for users who already are logged in and are in the login/signup page
+const NavigateUserProperlyAuthPage = async () => {
     // If user is authenticated, redirect to home page
-    if (localStorage.getItem("isAuthenticated")) {
+    if (localStorage.getItem(localStorageNames.isAuthenticated)) {
         // If token is expired, redirect to login page
         if (isExpired())
             window.location.href = "index.html";
@@ -160,24 +171,30 @@ async function NavigateUserProperlyAuthPage() {
     }
 }
 
+// Handler for users who attempt to access admin page without being an admin
 const NavigateUserProperlyAdminPage = async () => 
 {
-    const userData = JSON.parse(localStorage.getItem("userData"));
+    // If user is not authenticated, redirect to login page
+    const userData = JSON.parse(localStorage.getItem(localStorageNames.data)); // constants.js
+    // If theres no user data, redirect to login page
     if (!userData)
         window.location.href = "index.html";
     if (userData.role.role !== "admin")
         window.location.href = "home.html";   
 }
 
-async function NavigateUserProperlyKick () {
+// Handler for users who attempt to access home page without being logged in
+const NavigateUserProperlyKick = async () =>
+{
     // If token is expired, redirect to login page
     // If user is not authenticated, redirect to login page
-    if (isExpired() || !localStorage.getItem("isAuthenticated"))
+    if (isExpired() || !localStorage.getItem(localStorageNames.isAuthenticated))
         window.location.href = "index.html";
 }
 
+// Checks if token is expired
 const isExpired = () => {
-    const expirationDate = parseInt(localStorage.getItem("expirationDate"));
+    const expirationDate = parseInt(localStorage.getItem(localStorageNames.expirationDate));
 
     // If expiration date is not set, clear local storage and redirect to login page
     if (!expirationDate) {

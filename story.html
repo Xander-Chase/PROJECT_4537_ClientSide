@@ -45,6 +45,7 @@
   </div>
 
   <script src="./public/scripts/constants.js"></script>
+  <script src="./public/lang/en.js"></script>
   <script src="./public/scripts/Utils.js"></script>'
   <script src="./public/scripts/authenicateScript.js"></script>
   <script type="module">
@@ -54,9 +55,9 @@
     loadHeader();
 
     new Story(
-      JSON.parse(localStorage.getItem("userData")),
-      localStorage.getItem("storyIndex"),
-      localStorage.getItem("currentPaginationIndex")
+      JSON.parse(localStorage.getItem(localStorageNames.data)),
+      localStorage.getItem(localStorageNames.storyIndex),
+      localStorage.getItem(localStorageNames.currentPaginationIndex)
     )
     
   </script>

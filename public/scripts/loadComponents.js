@@ -4,13 +4,15 @@ const API_LOGOUT = "/api/auth/logout";
 * Gets user data and uses that data to check the role of the user
 * @returns {Promise<bool>} - Promise that resolves if the user is an admin, rejects otherwise
 */
-async function isAdmin() {
-  const userData = JSON.parse(localStorage.getItem("userData"));
+const isAdmin = async () =>
+{
+  const userData = JSON.parse(localStorage.getItem(localStorageNames.data));
   return userData.role.role === "admin";
 };
 
 // Loads header
-async function loadHeader() {
+const loadHeader = async () =>
+{
   try {
     
     // Get header 
@@ -19,11 +21,14 @@ async function loadHeader() {
     // Set the header element with HTML text
     const headerString = await response.text();
 
+    // get text from header and then parse it into HTML
     const parser = new DOMParser();
-    const headerHTML = parser.parseFromString(headerString, 'text/html');
+    const headerHTML = parser.parseFromString(headerString, "text/html");
+
     const isAdminUser = await isAdmin();
     const authButtons = headerHTML.getElementsByClassName("auth-button");
-    const logOutButton = headerHTML.getElementById("logout-button");
+
+    // If user is not an admin, hide the admin dashboard button
     if (!isAdminUser)
       headerHTML.getElementById("adminDashboard").style.display = "none";
     
@@ -32,22 +37,24 @@ async function loadHeader() {
       element.style.display = "none";
     });
 
-    const headerElement = headerHTML.getElementById('header');
-    document.getElementById('header').innerHTML = headerElement.innerHTML;
+    // Set the header element
+    const headerElement = headerHTML.getElementById("header");
+    document.getElementById("header").innerHTML = headerElement.innerHTML;
     
-    document.getElementById('logout-button').addEventListener('click', async () => {
-      console.log("Logging out");
+    // Add event listener to logout button
+    document.getElementById("logout-button").addEventListener("click", async () => {
       const response = await Utils.PostFetch(`${API_URL}${API_LOGOUT}`, null);
         if (response.ok) {
+          // Clear local storage and redirect to index
           localStorage.clear();
           window.location.href = 'index.html';
         } else {
-          alert('Error logging out');
+          alert(FAILURE_LOGOUT);
         }
       });
 
     // Load the script
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.textContent = `
       const removeSignInButtons = () => {
         const elements = [...document.getElementsByClassName("signin-button")];
@@ -61,17 +68,14 @@ async function loadHeader() {
     `;
     document.body.appendChild(script);
   } catch (error) {
-    console.error('Error loading header:', error);
+    console.error(FAILURE_LOADING_HEADER, error);
   }
+};
 
-  };
-
+// Remove story data
 const removeStoryData = async () => {
-  // story index
-  // currentPaginationIndex
-
-  localStorage.removeItem("storyIndex");
-  localStorage.removeItem("currentPaginationIndex");
+  localStorage.removeItem(localStorageNames.storyIndex);
+  localStorage.removeItem(localStorageNames.currentPaginationIndex);
 }
 
 export {loadHeader, isAdmin, removeStoryData};
