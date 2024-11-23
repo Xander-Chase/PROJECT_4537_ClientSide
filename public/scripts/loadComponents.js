@@ -1,16 +1,4 @@
-/**
- * GetUserPromise - Checks if the user is authenicated and gets the user data
- * @returns {Promise} - Promise that resolves with the user data if the user is authenicated, rejects otherwise
- */
-async function GetUserPromise() {
-  return new Promise(async (resolve, reject) => {
-    const response = await Utils.GetFetch(`${API_URL}/api/auth/user`);
-    if (response.ok)
-      resolve(response.json());
-    else
-      reject();
-  });
-}
+const API_LOGOUT = "/api/auth/logout";
 
 /**
 * Gets user data and uses that data to check the role of the user
@@ -49,7 +37,7 @@ async function loadHeader() {
     
     document.getElementById('logout-button').addEventListener('click', async () => {
       console.log("Logging out");
-      const response = await Utils.GetFetch(`${API_URL}/api/auth/logout`);
+      const response = await Utils.PostFetch(`${API_URL}${API_LOGOUT}`, null);
         if (response.ok) {
           localStorage.clear();
           window.location.href = 'index.html';
@@ -86,4 +74,4 @@ const removeStoryData = async () => {
   localStorage.removeItem("currentPaginationIndex");
 }
 
-export {loadHeader, isAdmin, GetUserPromise, removeStoryData};
+export {loadHeader, isAdmin, removeStoryData};
