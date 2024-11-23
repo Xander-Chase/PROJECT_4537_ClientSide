@@ -1,4 +1,5 @@
 const API_ENDPOINT = "/api/user/generateNext";
+const API_UPDATE_ENDPOINT = "/api/user/updateStory";
 
 class Story
 {
@@ -15,10 +16,11 @@ class Story
 
     init()
     {
-        this.renderDiv();
+        this.renderStoryDiv();
+        this.renderSaveStory();
     }
 
-    renderDiv()
+    renderStoryDiv()
     {
         if (!this.checkIfStoryExists())
         {
@@ -29,15 +31,56 @@ class Story
         const titleElement = document.getElementById("storyTitle");
         const descElement = document.getElementById("storyDesc");
         const storyTextElement = document.getElementById("story_description");
+        let pageNumberElement = document.getElementById("page_number");
 
+        pageNumberElement.innerHTML = `Page ${parseInt(this.paginationIndex) + 1} of 10`;
         titleElement.value = this.storyInfo.title;
         descElement.value = this.storyInfo.description;
         storyTextElement.innerHTML = Utils.cleanString(this.storyInfo.storyText);
 
         this.displayPrompts(this.storyInfo.promptOptions);
+        if (this.storyInfo.chosen)
+        {
+            const buttons = document.getElementsByClassName("ai_generated_prompt");
+            for (let i = 0; i < buttons.length; i++)
+                buttons[i].disabled = true;
+        }
         this.renderPaginationButtons();
     }
 
+
+    renderSaveStory()
+    {
+        const saveButton = document.getElementById("saveStory");
+        saveButton.onclick = async () => {
+            saveButton.disabled = true;
+            const titleElement = document.getElementById("storyTitle");
+            const descElement = document.getElementById("storyDesc");
+            const payload = await Utils.PutFetch(`${API_URL}${API_UPDATE_ENDPOINT}`, {
+                title: titleElement.value,
+                summary: descElement.value,
+                storyId: this.storyInfo._id,
+            });
+            if (payload.ok)
+            {
+                // set local storage
+                const userData = JSON.parse(localStorage.getItem("userData"));
+                if (userData.stories.title === undefined)
+                {
+                    userData.stories[parseInt(this.storyIndex)].title = titleElement.value;
+                    userData.stories[parseInt(this.storyIndex)].summary = descElement.value;
+                }
+                else
+                {
+                    userData.stories.title = titleElement.value;
+                    userData.stories.summary = descElement.value;
+                }
+                localStorage.setItem("userData", JSON.stringify(userData));
+            } else
+                alert("Error saving story");
+            saveButton.disabled = false;
+        }
+    }
     displayPrompts(promptOptions)
     {
         const promptElement = document.getElementById("prompt_choices");
@@ -51,11 +94,13 @@ class Story
         }
         promptElement.innerHTML = ""; // Clear existing prompt options
 
-        promptOptions.forEach((content, index) => {
-        
-            const buttonElement = this.renderPromptButton(content, index);
-            promptElement.appendChild(buttonElement);
-        });
+        // Check if page is at the end of the story
+        if (!this.checkIfEndOfStory())
+            promptOptions.forEach((content, index) => {
+            
+                const buttonElement = this.renderPromptButton(content, index);
+                promptElement.appendChild(buttonElement);
+            });
 
     }
 
@@ -71,7 +116,8 @@ class Story
                 buttons[i].disabled = true;
 
             // Set loading spinner
-            // 
+            const spinner = document.getElementById("loading");
+            spinner.style.visibility = "visible";
 
             // Handle call to fetch story
             try
@@ -137,14 +183,24 @@ class Story
 
         // Next Button functionality
         {
-            if (paginationIndex === listLength - 1)
+            // const nextButton = document.getElementById("nextButton");
+            // nextButton.innerHTML = "&gt; Finish";
+
+            if (paginationIndex === listLength - 1 && !this.checkIfEndOfStory())
                 nextButton.disabled = true;
             else
                 nextButton.disabled = false;
 
+            if (this.checkIfEndOfStory())
+                nextButton.innerHTML = "&gt; Finish";
             nextButton.onclick = () => {
-                localStorage.setItem("currentPaginationIndex", paginationIndex + 1);
-                window.location.reload();
+                if (this.checkIfEndOfStory())
+                    window.location.href = "storyEnd.html";
+                else
+                {
+                    localStorage.setItem("currentPaginationIndex", paginationIndex + 1);
+                    window.location.reload();
+                }
             }
         }
     }
@@ -158,6 +214,11 @@ class Story
         return this.storyIndex && this.paginationIndex;
     }
 
+    // max 10 content per story
+    checkIfEndOfStory()
+    {
+        return parseInt(this.paginationIndex) === 9;
+    }
     getStoryInfo()
     {
         let paginationIndex = parseInt(this.paginationIndex);
@@ -170,6 +231,7 @@ class Story
             _id: stories._id,
             storyText: stories.content[paginationIndex].description,
             promptOptions: stories.content[paginationIndex].prompts,
+            chosen: stories.content[paginationIndex].chosenPrompt,
             title: stories.title,
             description: stories.summary,
             contentRef: stories.content

@@ -43,6 +43,7 @@
     <div class="isa_col justify-content-evenly">
       <div>
         <h1 id="greeting" class="display-5 fw-bold text-body-emphasis text-center"></h1>
+        <h2 id="apiUsages" class="text-body-emphasis text-center"></h2>
       </div>
       <div>
         <button class="width-100" data-bs-toggle="modal" data-bs-target="#generateModal" id="add">New Story</button>
@@ -77,12 +78,14 @@
 
     loadHeader();
     const greetingHTML = document.getElementById('greeting');
+    const apiUsagesHTML = document.getElementById('apiUsages');
 
     let userData = JSON.parse(localStorage.getItem("userData"));
     new Dashboard(userData);
 
     removeStoryData();
     greetingHTML.innerHTML = `Welcome, ${userData.user.username}!`;
+    apiUsagesHTML.innerHTML = `You have ${userData.apiUsage.count} API usages left!`;
     
   </script>
     <script src="./public/scripts/authenicateScript.js"></script>

@@ -16,6 +16,9 @@ class Dashboard {
             // Dont re-fresh page
             event.preventDefault(); 
 
+            // You have to call the database again to get the amount of API Usages...
+            // If the user has no API usages left, then alert them and return
+
             // Set loading spinner
             document.getElementById("loading").style.visibility = "visible";
             // Disable the submit button
@@ -47,40 +50,8 @@ class Dashboard {
                     // Reset current page number
                     localStorage.setItem("currentPaginationIndex", 0);
                     // Redirect to the story page
-                    window.location.href = "story.html";
-
-                    // {
-                    //                         // Append story to the localPage
-                    // // stories is now a json
-                    // // let jsonStory = 
-                    // // {
-                    // //     0: []
-                    // // }
-                    // // Use this for Milestone 2, linked list
-                    // // var count = Object.keys(jsonStory).length;
-                    // // jsonStory[count] = [data.generatedStoryPart];
-                    // let storyArray = localStorage.getItem("data");
-                    // // This is just used for planning for the Milestone 2.
-                    // if (storyArray == null) {
-                    //     storyArray = JSON.stringify({
-                    //         0: {
-                    //             stories: [],
-                    //             promptOptions: []
-                    //         }
-                    //     });
-                    // }
-                    // let jsonData = JSON.parse(storyArray);
-                    // jsonData[0].stories.push(data.generatedStoryPart);
-                    // jsonData[0].promptOptions.push(data.promptOptions);
-                    // localStorage.setItem("data", JSON.stringify(jsonData));
-                    // // Temporarily set current page to 1
-                    // localStorage.setItem("currentPageNumber", "1");
-                    // // Redirect to the story page
-                    // window.location.href = "story.html";
-                    // }
-                    
-                }
-                ,
+                    window.location.href = "story.html";                    
+                },
                 (error) => { alert(error); }
             )
             } catch (error) {
@@ -91,6 +62,12 @@ class Dashboard {
         }
     }
 
+    usageCheck = () => {
+        // Call the server side directly, people can change the size of the API Usage in LocalStorage
+        // and bypass the client side check
+
+        
+    }
     loadList()
     {
         let stories = JSON.parse(localStorage.getItem("userData")).stories;

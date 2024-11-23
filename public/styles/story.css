@@ -68,6 +68,10 @@
     background-color: red;
 }
 
+.ai_generated_prompt:disabled
+{
+    background-color: grey;
+}
 .navigation_button
 {
     background-color: coral;
@@ -77,6 +81,11 @@
     padding: 1%;
 }
 
+#loading
+{
+    color: black !important;
+    visibility: hidden;
+}
 #mainContent
 {
     background-color: transparent;
