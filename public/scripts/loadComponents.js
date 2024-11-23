@@ -78,4 +78,12 @@ async function loadHeader() {
 
   };
 
-export {loadHeader, isAdmin, GetUserPromise};
+const removeStoryData = async () => {
+  // story index
+  // currentPaginationIndex
+
+  localStorage.removeItem("storyIndex");
+  localStorage.removeItem("currentPaginationIndex");
+}
+
+export {loadHeader, isAdmin, GetUserPromise, removeStoryData};

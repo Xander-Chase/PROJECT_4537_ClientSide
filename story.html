@@ -28,7 +28,12 @@
               Text       
             </p>
           </div>
-          <div class="description p-4">
+          <div class="description p-4 text-center">
+            <div id="loading">
+              <div class="spinner-border" role="status"></div>
+              <p>Now Generating... please wait!</p>
+            </div>
+  
             <div id="prompt_choices" class="prompt_choices">
                No prompts available
             </div>
@@ -42,170 +47,17 @@
   <script src="./public/scripts/constants.js"></script>
   <script src="./public/scripts/Utils.js"></script>'
   <script src="./public/scripts/authenicateScript.js"></script>
-  <script>
-
-    // Retrieve the story text and prompt options
-    let stories = JSON.parse(localStorage.getItem("userData")).stories;
-    console.log(stories.title)
-    if (stories.title === undefined)
-    {
-       stories = stories[parseInt(localStorage.getItem("storyIndex"))]
-       console.log(stories)
-    }
-    const currentPageNum = (parseInt(localStorage.getItem("currentPaginationIndex")) - 1) || 0;
-    console.log(stories.content)
-    let storyText = stories.content[currentPageNum].description
-    const promptOptions = stories.content[currentPageNum].prompts;
-
-    const titleElement = document.getElementById("storyTitle");
-    titleElement.value = stories.title;
-    const descElement = document.getElementById("storyDesc");
-    descElement.value = stories.summary;
-    
-    if (storyText) {
-      document.getElementById('story_description').innerText = Utils.cleanString(storyText);
-    } else {
-      alert("No story text found, try typing a prompt!");
-      // If no story text is found, redirect back to the index page
-      window.location.href = 'home.html';
-    }
-
-    // Display the prompt options
-    const promptChoicesDiv = document.getElementById('prompt_choices');
-    if (promptOptions && promptOptions.length > 0) {
-      promptChoicesDiv.innerHTML = ''; // Clear existing prompts
-      promptOptions.forEach((suggestion, index) => {
-        const button = document.createElement('button');
-        button.classList.add('ai_generated_prompt');
-        button.innerHTML = `Option ${index + 1}: ${Utils.cleanString(suggestion)}...`;
-        promptChoicesDiv.appendChild(button);
-
-        // Add event listener for button click
-        button.addEventListener('click', async () => {
-          
-          // Disable Buttons
-          const buttons = document.getElementsByClassName("ai_generated_prompt");
-          for (let i = 0; i < buttons.length; i++) {
-            buttons[i].disabled = true;
-          }
-
-          // Handle prompt selection
-          try {
-            const response = await Utils.PostFetch(`${API_URL}/api/generate-story`, {
-              prompt: `${Utils.cleanString(suggestion)}`,
-            });
-            
-            if (response.ok) {
-              const data = await response.json();
-              const newStoryPart = data.generatedStoryPart;
-              storyText = newStoryPart; // Replace the story text with the new part
-              localStorage.setItem('storyText', storyText);
-              localStorage.setItem('promptOptions', JSON.stringify(data.promptOptions));
-
-              // Update current page number
-              let currentPageNumber = parseInt(localStorage.getItem('currentPageNumber')) || 1;
-              currentPageNumber += 1;
-              localStorage.setItem('currentPageNumber', currentPageNumber.toString());
-
-              // Update the displayed story and prompts without page reload
-              document.getElementById('story_description').innerText = storyText;
-              displayPrompts(data.promptOptions);
-              pageNumberElement.innerHTML = `Page ${currentPageNumber}`;
-            } else {
-              alert('Error generating the next part of the story');
-            }
-          } catch (error) {
-            // re-enable buttons
-            for (let i = 0; i < buttons.length; i++) {
-              buttons[i].disabled = false;
-            }
-            console.error('Error:', error);
-            alert('An error occurred while generating the next part of the story.');
-          }
-        });
-      });
-    } else {
-      // If no prompts are found, show a message
-      promptChoicesDiv.innerHTML = '<p>No prompts available.</p>';
-    }
-
-    // Function to display new prompts without reloading the page
-    function displayPrompts(newPromptOptions) {
-      promptChoicesDiv.innerHTML = ''; // Clear existing prompts
-      newPromptOptions.forEach((suggestion, index) => {
-        const button = document.createElement('button');
-        button.classList.add('ai_generated_prompt');
-        button.innerHTML = `Option ${index + 1}: ${Utils.cleanString(suggestion)}`;
-        promptChoicesDiv.appendChild(button);
-
-        // Add event listener for button click
-        button.addEventListener('click', async () => {
-
-          // Disable Buttons
-          const buttons = document.getElementsByClassName("ai_generated_prompt");
-          for (let i = 0; i < buttons.length; i++) {
-            buttons[i].disabled = true;
-          }
-
-          // Handle prompt selection
-          try {
-            const response = await PostFetch(`${API_URL}/api/generate-story`, {
-              prompt: `${Utils.cleanString(suggestion)}`,
-            });
-
-            if (response.ok) {
-              const data = await response.json();
-              const newStoryPart = data.generatedStoryPart;
-              storyText = newStoryPart; // Replace the story text with the new part
-              localStorage.setItem('storyText', storyText);
-              localStorage.setItem('promptOptions', JSON.stringify(data.promptOptions));
-
-              // Update current page number
-              let currentPageNumber = parseInt(localStorage.getItem('currentPageNumber')) || 1;
-              currentPageNumber += 1;
-              localStorage.setItem('currentPageNumber', currentPageNumber.toString());
-
-              // Update the displayed story and prompts without page reload
-              document.getElementById('story_description').innerText = storyText;
-              displayPrompts(data.promptOptions);
-              pageNumberElement.innerHTML = `Page ${currentPageNumber}`;
-            } else {
-              alert('Error generating the next part of the story');
-            }
-          } catch (error) {
-            // re-enable buttons
-            for (let i = 0; i < buttons.length; i++) {
-              buttons[i].disabled = false;
-            }
-            console.error('Error:', error);
-            alert('An error occurred while generating the next part of the story.');
-          }
-        });
-      });
-    }
-
-    // Update other elements as needed
-    // const userNameHeader = document.getElementById('userName_header');
-
-    // Update page number
-    const pageNumberElement = document.getElementById('page_number');
-    const currentPageNumber = parseInt(localStorage.getItem('currentPageNumber')) || 1;
-    pageNumberElement.innerHTML = `Page ${currentPageNumber}`;
-
-    // Back Button Functionality
-    document.getElementById('backButton').addEventListener('click', () => {
-      window.location.href = 'home.html';
-    });
-  </script>
   <script type="module">
 
     import { loadHeader } from './public/scripts/loadComponents.js';
+    import { Story } from "./public/scripts/story.js";
     loadHeader();
 
-    // let userData = await GetUserPromise();
-
-    // userNameHeader.innerHTML = `Welcome, ${userData.user.username}! To your story!`;
-
+    new Story(
+      JSON.parse(localStorage.getItem("userData")),
+      localStorage.getItem("storyIndex"),
+      localStorage.getItem("currentPaginationIndex")
+    )
     
   </script>
   <script src="./public/scripts/themeChanger.js"></script>
