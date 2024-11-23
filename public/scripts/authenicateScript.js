@@ -97,7 +97,7 @@ const onLogin = async (event) => {
             },
             async (payload) => {
                 // If login failed
-                let data = payload.error ?? payload;
+                let data = payload.error;
                 alert(data || LOGIN_FAILED);
                 loginButton.removeAttribute("disabled");
             }          
@@ -122,6 +122,13 @@ async function NavigateUserProperlyAuthPage() {
         else
             window.location.href = 'home.html';
     }
+}
+
+NavigateUserProperlyAdminPage = async () => 
+{
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    if (userData.role.role !== "admin")
+        window.location.href = "home.html";   
 }
 
 async function NavigateUserProperlyKick () {
