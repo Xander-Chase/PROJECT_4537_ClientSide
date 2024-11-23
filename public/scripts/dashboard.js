@@ -1,4 +1,5 @@
 const API_ENDPOINT = "/api/user/generate";
+const API_USAGE_ENDPOINT = "/api/user/getApiUsage";
 const ERROR_GEN_STORY = "Error generating story";
 const ERROR_GEN_STORY_TWO = "An error occurred while generating the story.";
 class Dashboard {
@@ -16,13 +17,36 @@ class Dashboard {
             // Dont re-fresh page
             event.preventDefault(); 
 
-            // You have to call the database again to get the amount of API Usages...
-            // If the user has no API usages left, then alert them and return
-
+            let spinner =
             // Set loading spinner
-            document.getElementById("loading").style.visibility = "visible";
+            document.getElementById("loading");
+
+            spinner.style.visibility = "visible";
             // Disable the submit button
             document.getElementById("submitPrompt").disabled = true;
+
+            // You have to call the database again to get the amount of API Usages...
+            // If the user has no API usages left, then alert them and return
+            const usagePayload = await Utils.GetFetch(`${API_URL}${API_USAGE_ENDPOINT}`, {});
+            if (usagePayload.ok)
+            {
+                const amount = (await usagePayload.json()).apiUsage.count;
+                {
+                    // replace local storage with the new amount
+                    let userData = JSON.parse(localStorage.getItem("userData"));
+                    userData.apiUsage.count = amount;
+                    localStorage.setItem("userData", JSON.stringify(userData));
+                }
+
+                if (amount === 0)
+                {
+                    alert("You have no API usages left. Please upgrade your account to continue using the API.");
+                    spinner.style.visibility = "hidden";
+                    return;
+                }
+            }
+
+
             // Get the prompt given by the user
             const prompt = document.getElementById("prompt").value;
             try {
