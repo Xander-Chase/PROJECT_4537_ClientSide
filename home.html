@@ -70,6 +70,7 @@
   </main>
 
   <script src="./public/scripts/constants.js"></script>
+  <script src="./public/lang/en.js"></script>
   <script src="./public/scripts/Utils.js"></script>
   <script type="module">
 
@@ -80,12 +81,12 @@
     const greetingHTML = document.getElementById('greeting');
     const apiUsagesHTML = document.getElementById('apiUsages');
 
-    let userData = JSON.parse(localStorage.getItem("userData"));
+    let userData = JSON.parse(localStorage.getItem(localStorageNames.data));
     new Dashboard(userData);
-
+    
     removeStoryData();
-    greetingHTML.innerHTML = `Welcome, ${userData.user.username}!`;
-    apiUsagesHTML.innerHTML = `You have ${userData.apiUsage.count} API usages left!`;
+    greetingHTML.innerHTML = `${GREETING_OPEN}${userData.user.username}${GREETING_CLOSE}`;
+    apiUsagesHTML.innerHTML = `${API_USAGE_TEXT}${userData.apiUsage.count}${API_USAGE_TEXT_CLOSE}`;
     
   </script>
     <script src="./public/scripts/authenicateScript.js"></script>
