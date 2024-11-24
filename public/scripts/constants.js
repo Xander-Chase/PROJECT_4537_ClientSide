@@ -2,9 +2,9 @@
 const isLocalhost = window.location.hostname === 'localhost';
 
 // Set the API_URL based on the environment
-const API_URL = !isLocalhost
+const API_URL = isLocalhost
     ? 'http://localhost:8080'
-    : 'https://comp-4537-server-side-863fa8c790dd.herokuapp.com';
+    : "https://storybox.azurewebsites.net";
 
 const localStorageNames = {
     data: "userData",
