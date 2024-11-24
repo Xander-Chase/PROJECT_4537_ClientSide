@@ -1,8 +1,60 @@
-
-.main_container, #suggestions_container, #login_form, #index_form, #story-container, #mainContent
+.isa_row
 {
     display: flex;
-    /* align-items: center; */
+    flex-direction: row !important;
+}
+
+.width-100
+{
+    width: 100% !important;
+}
+
+.justify-content-evenly
+{
+    justify-content: space-evenly;
+}
+
+.align
+{
+    align-content: center;
+    align-items: center;
+}
+
+.align-self-center
+{
+    align-self: center;
+}
+.justify-content-center
+{
+    justify-content: center;
+}
+
+.justify-content-between
+{
+    justify-content: space-between;
+}
+
+.justify-content-end
+{
+    justify-content: flex-end;
+}
+
+#user-table-div div {
+    width: 25%;
+
+}
+.scrollable
+{
+    overflow-y: auto;
+    max-height: 600px;
+    scrollbar-width: none;
+}
+
+.isa_col
+{
+    display: flex;
+    flex-direction: column;
+    
 }
 
 #mainContent
@@ -13,7 +65,6 @@
 }
 .main_container
 {
-    /* background-color: #f0f0f0; */
     padding: 5%;
     width: 100%;
     border-radius: 25px;
@@ -34,23 +85,6 @@
     align-items: center;
 }
 
-#story-container
-{
-    background-image: url('../imgs/book_background.jpg');
-    background-size: 105% 100%;
-    /* background-size:cover; */
-    background-position: center center;
-    background-repeat: no-repeat;
-    
-    flex-direction: row;
-    text-align: center;
-    gap: 10%;
-}
-
-#story-container
-{
-    padding: 10%;
-}
 .image-container
 {
     width: 50%;
@@ -74,4 +108,15 @@
 .anchorLinkDesign:active
 {
     color: #FF0000;
+}
+
+@media only screen and (max-width: 1000px) {
+    .isa_row
+    {
+        flex-direction: column !important;
+    }
+    .isa_row div
+    {
+        width: 100% !important;
+    }
 }

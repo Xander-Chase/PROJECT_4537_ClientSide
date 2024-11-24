@@ -1,59 +1,48 @@
-// Determine if the app is running on localhost
-const isLocalhost = window.location.hostname === 'localhost';
+const API_REGISTER = "/api/auth/register";
 
-// Set the API_URL based on the environment
-const API_URL = isLocalhost
-? 'http://localhost:8080'
-: 'https://comp-4537-server-side-863fa8c790dd.herokuapp.com';
+// Handler for the register form submission
+const onRegister = async (event) => {
+    event.preventDefault(); // Prevent page reload on form submit
 
-/**
-const API_URL = isLocalhost
-? 'http://localhost:8080'
-: 'https://comp-4537-server-side-863fa8c790dd.herokuapp.com';
-*/
+    // Disable the register button to prevent multiple submissions
+    const registerButton = event.target.registerButton;
+    registerButton.toggleAttribute("disabled");
 
-const TITLE_OPENING = "Your remaining usages,";
-const EXCLIMATION_MARK = "!";
-const DESCRIPTION_OPENING = "You have";
-const DESCRIPTION_CLOSING = "remaining out of 20 API consumptions left!";
-const LOGIN_FAILED = "Login failed. Please try again.";
-const NETWORK_ERROR = "Network error. Please try again later.";
+    // Collect username, email and password from input fields
+    const username = event.target.username.value;
+    const email = event.target.email.value;
+    const password = event.target.password.value;
 
-const secretKey = "key";
-const createToken = (username, password) => {
-
-    // Check if the user exists
-    // dont do this yet, we dont have database at moment
-    // user = find user in database
-    // if !user then return 401
-
-    // Check if the password is correct
-    // if user.password !== password then return 401
-
-    // Create a token
-    // const token = jwt.sign({userId: `${username}-${password}`}, secretKey, {
-    //     expiresIn: '1h'
-    // });
-
-    // if (Storage !== undefined) {
-    //     localStorage.setItem('token', token);
-    // } else {
-    //     console.log('Local storage is not supported');
-    // }
-}
-
-const authenicate = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        const decoded = jwt.verify(token, secretKey);
-        localStorage.setItem('id', decoded);
-        return true;
-    }
-    else
+    try
     {
-        return false;
+        // Make a POST request to the register API from server
+        const registerPayload = await Utils.PostFetch(`${API_URL}${API_REGISTER}`, {
+            username: username,
+            email: email,
+            password: password
+        });
+
+        // If the registration was successful, alert the user and redirect to login page
+        const data = await registerPayload.json();
+        if (registerPayload.ok)
+        {
+            alert('Signup successful! You can now log in.');
+            window.location.href = 'index.html';
+        }
+        // If the registration failed, alert the user with the error message
+        else
+            throw new Error(data.error || "Registration failed. Please try again.");
+    }
+    catch (error)
+    {
+        // Handle errors here
+        console.error("Error:", error);
+        alert(NETWORK_ERROR); // en.js
+        registerButton.removeAttribute("disabled");
     }
 }
+
+// Handler for the login form submission
 const onLogin = async (event) => {
     event.preventDefault(); // Prevent page reload on form submit
 
@@ -69,50 +58,45 @@ const onLogin = async (event) => {
         // Make a Promise consisting of a POST request to the login API
         const response = new Promise(async (res, rej) => {
             try {
-                const payload = await fetch(`${API_URL}/api/auth/login`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, password }),
+                const payload = await Utils.PostFetch(`${API_URL}/api/auth/login`, {
+                    email: email,
+                    password: password
                 });
         
+                // If the response is OK, resolve the promise
                 if (payload.ok)
-                    res(payload);
+                    res();
                 else
+                    // If the response is not OK, reject the promise with the response JSON
                     rej(payload.json());
                 
             } catch (err) {
+                // Catch error and reject the promise with the error
                 rej(err);
             }
         });
 
+        // Handle the response from the login API
         response.then(
             // If logged in successfully
-            async (payload) => {
-
-                // Parse the response JSON
-                let data = await payload.json();
-
-                // store the JWT token in localStorage
-                localStorage.setItem("token", data.token);
+            async () => {                
 
                 // Create new promise that gets user from database
                 new Promise(async (res, rej) => {
                     try {
-                        const userPayload = await fetch(`${API_URL}/api/auth/user`, {
-                            method: "GET",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${data.token}`,
-                            }
-                        });
+                        // Get the user from the database
+                        const userPayload = await Utils.GetFetch(`${API_URL}/api/user/info`, {});
                         
+                        // If the user was successfully retrieved, resolve the promise
                         if (userPayload.ok)
                             res(userPayload);
                         else
+                            // If the user was not successfully retrieved, reject the promise with the response JSON
                             rej(userPayload.json());
                     }
                     catch (err)
                     {
+                        // Catch error and reject the promise with the error
                         rej(err);
                     }
                 }).then(
@@ -123,7 +107,7 @@ const onLogin = async (event) => {
 
                         // Display the user's remaining API consumptions
                         const title = `${TITLE_OPENING} ${dataJson.user.username}${EXCLIMATION_MARK}`;
-                        const description = `${DESCRIPTION_OPENING} ${dataJson.user.api_consumptions} ${DESCRIPTION_CLOSING}`;
+                        const description = `${DESCRIPTION_OPENING} ${dataJson.apiUsage.count} ${DESCRIPTION_CLOSING}`;
                         document.getElementById("panel").innerHTML = 
                             `<h1 class="display-4 fw-bold lh-1 text-body-emphasis mb-3">
                                 ${title}
@@ -136,6 +120,18 @@ const onLogin = async (event) => {
                             onclick="window.location.href = 'home.html'">
                             Home
                             </button>`;
+
+                        // Set the user's data in local storage
+                        localStorage.setItem(localStorageNames.isAuthenticated, "true"); // constants.js
+                        localStorage.setItem(localStorageNames.data, JSON.stringify(dataJson));
+
+                        // block scope
+                        {
+                            // expire in 1hr
+                            const expirationDate = new Date().setHours(new Date().getHours() + 1);
+                            localStorage.setItem(localStorageNames.expirationDate, `${expirationDate}`);
+                        }
+
                     },
                     async (payload) => {
                         // If failed to get the user
@@ -147,7 +143,7 @@ const onLogin = async (event) => {
             },
             async (payload) => {
                 // If login failed
-                let data = payload.error ?? payload;
+                let data = payload.error;
                 alert(data || LOGIN_FAILED);
                 loginButton.removeAttribute("disabled");
             }          
@@ -161,4 +157,55 @@ const onLogin = async (event) => {
         loginButton.removeAttribute("disabled");
     }
 }
-    
+
+// Handler for users who already are logged in and are in the login/signup page
+const NavigateUserProperlyAuthPage = async () => {
+    // If user is authenticated, redirect to home page
+    if (localStorage.getItem(localStorageNames.isAuthenticated)) {
+        // If token is expired, redirect to login page
+        if (isExpired())
+            window.location.href = "index.html";
+        // If token is not expired, redirect to home page
+        else
+            window.location.href = 'home.html';
+    }
+}
+
+// Handler for users who attempt to access admin page without being an admin
+const NavigateUserProperlyAdminPage = async () => 
+{
+    // If user is not authenticated, redirect to login page
+    const userData = JSON.parse(localStorage.getItem(localStorageNames.data)); // constants.js
+    // If theres no user data, redirect to login page
+    if (!userData)
+        window.location.href = "index.html";
+    if (userData.role.role !== "admin")
+        window.location.href = "home.html";   
+}
+
+// Handler for users who attempt to access home page without being logged in
+const NavigateUserProperlyKick = async () =>
+{
+    // If token is expired, redirect to login page
+    // If user is not authenticated, redirect to login page
+    if (isExpired() || !localStorage.getItem(localStorageNames.isAuthenticated))
+        window.location.href = "index.html";
+}
+
+// Checks if token is expired
+const isExpired = () => {
+    const expirationDate = parseInt(localStorage.getItem(localStorageNames.expirationDate));
+
+    // If expiration date is not set, clear local storage and redirect to login page
+    if (!expirationDate) {
+        localStorage.clear();
+        return true;
+    }
+
+    // If is already expired, clear local storage and redirect to login page
+    if (new Date().getTime() > expirationDate) {
+        localStorage.clear();
+        return true;
+    }
+    return false;
+}

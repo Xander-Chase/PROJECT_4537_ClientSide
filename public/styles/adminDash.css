@@ -1,0 +1,4 @@
+.deleted *
+{
+    background-color: rgb(231, 83, 83) !important;
+}

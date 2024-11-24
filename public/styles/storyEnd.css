@@ -19,22 +19,13 @@
 
 .description
 {
-    align-items: center;
     padding: 1%;
     width: 50%;
-}
 
-#story-container
-{
-    background-image: url('../imgs/book_background.jpg');
-    background-size: 107% 100%;
-    background-position: center center;
-    background-repeat: no-repeat;
 }
 
 #story_description
 {
-    text-align: center;
     font-size: x-large;
     font-style: italic;
     letter-spacing: 1px;
@@ -50,13 +41,14 @@
     
 }
 
-#controls
+#body-container
 {
-    width: 50%;
+    padding: 3%;
 }
+
 #body-container div
 {
-    padding: 4%;
+    padding: 1%;
 }
 .ai_generated_prompt:hover
 {
@@ -68,10 +60,6 @@
     background-color: red;
 }
 
-.ai_generated_prompt:disabled
-{
-    background-color: grey;
-}
 .navigation_button
 {
     background-color: coral;
@@ -81,11 +69,6 @@
     padding: 1%;
 }
 
-#loading
-{
-    color: black !important;
-    visibility: hidden;
-}
 #mainContent
 {
     background-color: transparent;
@@ -98,14 +81,16 @@
 
 #storyTitle
 {
-    font-size: 1em;
-    font-weight: bold;
     text-shadow: 2px 1px 7px 0.3px #000000;
 }
 
-@media only screen and (max-width: 1000px) {
-    #story-container
-    {
-        flex-direction: row !important;
-    }
+#buttons
+{
+    align-self: center !important;
+    width: 50%;
+}
+
+.content
+{
+    width: 50%;
 }
